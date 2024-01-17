@@ -3,10 +3,7 @@ from enum import Enum
 
 # TODO: ramdomly generate past and positive
 # TODO: ramdomly return verbs, nouns and adjectives
-# TODO: fill verbs, nouns and adjetives lists
-# TODO: treat 3 exception verbs, iru and aru and ii and kakoii
 # TODO: README
-# TODO: differentiate iru and aru based on noun
 # TODO: front-end with hiragana keyboard
 
 class Type(Enum):
@@ -51,10 +48,14 @@ verbs = [
   Word("しぬ", "die", Type.U_VERB),
   Word("のむ", "drink", Type.U_VERB),
   Word("かう", "buy", Type.U_VERB),
-  Word("くる", "come", Type.RU_VERB),
+  Word("くる", "come", Type.RU_VERB), #exception 
   Word("かく", "write", Type.U_VERB),
   Word("もつ", "hold", Type.U_VERB),
   Word("すてる", "throw away", Type.RU_VERB),
+  Word("いる", "exist(animate)", Type.RU_VERB),
+  Word("ある", "exist(inanimate)", Type.RU_VERB),
+  Word("する", "do", Type.RU_VERB), # exception
+  Word("いく", "go", Type.RU_VERB),
 ]
 
 nouns = [
@@ -82,27 +83,40 @@ def getAdjective():
 def getVerb():
     return verbs[0]
 
-def convertAdjective(adjective, adjectiveIsPositive, adjectiveInPresentTense):
-    if adjective.type == Type.NA_ADJECTIVE:
+def convertAdjective(adjective, adjectiveType, adjectiveIsPositive, adjectiveInPresentTense):
+    if adjective == "いい" or adjective == "かっこいい":
+        adjective = ""
+        if adjective == "かっこいい":
+            adjective = "かっこ"
         if adjectiveIsPositive and adjectiveInPresentTense:
-            return adjective.japanese + "な"
+            return adjective + "いい"
         elif not adjectiveIsPositive and adjectiveInPresentTense:
-            return adjective.japanese + "じゃない"
+            return adjective + "よくない"
         elif adjectiveIsPositive and not adjectiveInPresentTense:
-            return adjective.japanese + "だった"
+            return adjective + "よかった"
         elif not adjectiveIsPositive and not adjectiveInPresentTense:
-            return adjective.japanese + "じゃなかった"
-    elif adjective.type == Type.I_ADJECTIVE:
-        if adjectiveIsPositive and adjectiveInPresentTense:
-            return adjective.japanese
-        elif not adjectiveIsPositive and adjectiveInPresentTense:
-            return re.sub(r"い$", "", adjective.japanese) + "くない"
-        elif adjectiveIsPositive and not adjectiveInPresentTense:
-          return re.sub(r"い$", "", adjective.japanese) + "かった"
-        elif not adjectiveIsPositive and not adjectiveInPresentTense:
-          return re.sub(r"い$", "", adjective.japanese) + "くなかった"
+            return adjective + "よくなかった"
 
-def convertVerb(verb, verbIsPositive, verbInPresentTense):
+    if adjectiveType == Type.NA_ADJECTIVE:
+        if adjectiveIsPositive and adjectiveInPresentTense:
+            return adjective + "な"
+        elif not adjectiveIsPositive and adjectiveInPresentTense:
+            return adjective + "じゃない"
+        elif adjectiveIsPositive and not adjectiveInPresentTense:
+            return adjective + "だった"
+        elif not adjectiveIsPositive and not adjectiveInPresentTense:
+            return adjective + "じゃなかった"
+    elif adjectiveType == Type.I_ADJECTIVE:
+        if adjectiveIsPositive and adjectiveInPresentTense:
+            return adjective
+        elif not adjectiveIsPositive and adjectiveInPresentTense:
+            return re.sub(r"い$", "", adjective) + "くない"
+        elif adjectiveIsPositive and not adjectiveInPresentTense:
+          return re.sub(r"い$", "", adjective) + "かった"
+        elif not adjectiveIsPositive and not adjectiveInPresentTense:
+          return re.sub(r"い$", "", adjective) + "くなかった"
+
+def convertVerb(verb, verbType, verbIsPositive, verbInPresentTense):
     uEquivalent = {
         "あ":"う",
 	    "か":"く",
@@ -119,43 +133,67 @@ def convertVerb(verb, verbIsPositive, verbInPresentTense):
         "ば":"ぶ",
         "ぱ":"ぷ"
     }
-    if verb.type == Type.RU_VERB:
-        if verbIsPositive and verbInPresentTense:
-           return verb.japanese
-        elif not verbIsPositive and verbInPresentTense:
-           return re.sub(r"る$", "", verb.japanese) + "ない"
-        elif not verbIsPositive and not verbInPresentTense:
-            return re.sub(r"る$", "", verb.japanese) + "た"
-        elif not verbIsPositive and not verbInPresentTense:
-           return re.sub(r"る$", "", verb.japanese) + "なかった"
-    elif verb.type == Type.U_VERB:
-        if verbIsPositive and verbInPresentTense:
-            return verb.japanese
-        elif not verbIsPositive and verbInPresentTense:
-            if re.search(r"(う$)", verb.japanese):
-                return re.sub(r"う$", "", verb.japanese) + "わ"
-            else:
-                lastSymbol = re.search("([ぁ-ゔァ-ヴー])$", verb.japanese)
-                return re.sub("([ぁ-ゔァ-ヴー])$", "", verb.japanese) + uEquivalent[lastSymbol.group(0)] + "ない"
-        elif verbIsPositive and not verbInPresentTense:
-            if (re.search(r"す$", verb.japanese)):
-                return re.sub("す$", "した", verb.japanese)
-            elif (re.search(r"く$", verb.japanese)):
-                return re.sub("く$", "いた", verb.japanese)
-            elif (re.search(r"す$", verb.japanese)):
-                return re.sub("ぐ$", "いだ", verb.japanese)
-            elif (re.search(r"む$|ぬ$|ぶ$", verb.japanese)):
-                return re.sub("む$|ぬ$|ぶ$", "んだ", verb.japanese)
-            elif (re.search(r"る$|つ$|う$", verb.japanese)):
-                return re.sub("る$|つ$|う$", "った", verb.japanese)
-        elif not verbIsPositive and not verbInPresentTense:
-            if re.search(r"(う$)", verb.japanese):
-                verb.japanese = re.sub(r"う$", "", verb.japanese) + "わない"
-            else:
-                lastSymbol = re.search("([ぁ-ゔァ-ヴー])$", verb.japanese)
-                verb.japanese = re.sub("([ぁ-ゔァ-ヴー])$", "", verb.japanese) + uEquivalent[lastSymbol.group(0)] + "ない"
 
-            return re.sub(r"い$", "", verb.japanese) + "かった"
+    if verbType == Type.RU_VERB:
+        if verbIsPositive and verbInPresentTense:
+           return verb
+        elif not verbIsPositive and verbInPresentTense:
+            if verb == "する":
+                verb = "しない"
+            elif verb == "くる":
+                verb = "こない"
+            elif verb == "ある":
+                verb = "ない"
+
+            return re.sub(r"る$", "", verb) + "ない"
+        elif not verbIsPositive and not verbInPresentTense:
+            if verb == "する":
+                verb = "した"
+            elif verb == "した":
+                verb = "こない"
+            elif verb == "いく":
+                verb = "いた"
+
+            return re.sub(r"る$", "", verb) + "た"
+        elif not verbIsPositive and not verbInPresentTense:
+            if verb == "する":
+                verb = "しない"
+            elif verb == "くる":
+                verb = "こない"
+            elif verb == "ある":
+                verb = "ない"
+
+            verb = re.sub(r"る$", "", verb) + "ない"
+           
+            return re.sub(r"い$", "", verb) + "かった"
+    elif verbType == Type.U_VERB:
+        if verbIsPositive and verbInPresentTense:
+            return verb
+        elif not verbIsPositive and verbInPresentTense:
+            if re.search(r"(う$)", verb):
+                return re.sub(r"う$", "", verb) + "わ"
+            else:
+                lastSymbol = re.search("([ぁ-ゔァ-ヴー])$", verb)
+                return re.sub("([ぁ-ゔァ-ヴー])$", "", verb) + uEquivalent[lastSymbol.group(0)] + "ない"
+        elif verbIsPositive and not verbInPresentTense:
+            if (re.search(r"す$", verb)):
+                return re.sub("す$", "した", verb)
+            elif (re.search(r"く$", verb)):
+                return re.sub("く$", "いた", verb)
+            elif (re.search(r"す$", verb)):
+                return re.sub("ぐ$", "いだ", verb)
+            elif (re.search(r"む$|ぬ$|ぶ$", verb)):
+                return re.sub("む$|ぬ$|ぶ$", "んだ", verb)
+            elif (re.search(r"る$|つ$|う$", verb)):
+                return re.sub("る$|つ$|う$", "った", verb)
+        elif not verbIsPositive and not verbInPresentTense:
+            if re.search(r"(う$)", verb):
+                verb = re.sub(r"う$", "", verb) + "わない"
+            else:
+                lastSymbol = re.search("([ぁ-ゔァ-ヴー])$", verb)
+                verb = re.sub("([ぁ-ゔァ-ヴー])$", "", verb) + uEquivalent[lastSymbol.group(0)] + "ない"
+
+            return re.sub(r"い$", "", verb) + "かった"
 
 if __name__=="__main__":
     print("How many questions do you want?\n")
@@ -168,6 +206,11 @@ if __name__=="__main__":
         verb = getVerb()
         particle = "が";
 
+        while (verb.japanese == "いる" and noun.type != Type.ANIMATE_NOUN):
+            noun = getNoun()
+        while (verb.japanese == "ある" and noun.type != Type.INANIMATE_NOUN):
+            noun = getNoun()
+
         adjectiveInPresentTense = True
         adjectiveIsPositive = True
         verbInPresentTense = True
@@ -179,10 +222,10 @@ if __name__=="__main__":
         ' do ' if verbInPresentTense else 'did '}{
         '' if verbIsPositive else 'not '}{verb.english}'\nin Japanese?\n""")
        
-        correctAnswer = convertAdjective(adjective, adjectiveIsPositive, adjectiveInPresentTense)
+        correctAnswer = convertAdjective(adjective.japanese, adjective.type, adjectiveIsPositive, adjectiveInPresentTense)
         correctAnswer += noun.japanese
         correctAnswer += particle
-        correctAnswer += convertVerb(verb, verbIsPositive, verbInPresentTense)
+        correctAnswer += convertVerb(verb.japanese, verb.type,verbIsPositive, verbInPresentTense)
         userAnswer = input()
 
         if userAnswer == correctAnswer:
