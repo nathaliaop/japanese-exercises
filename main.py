@@ -2,18 +2,20 @@ import re
 from enum import Enum
 
 # TODO: ramdomly generate past and positive
-# TODO: implement convert function
 # TODO: ramdomly return verbs, nouns and adjectives
 # TODO: fill verbs, nouns and adjetives lists
 # TODO: treat 3 exception verbs, iru and aru and ii and kakoii
 # TODO: README
+# TODO: differentiate iru and aru based on noun
+# TODO: front-end with hiragana keyboard
 
 class Type(Enum):
   U_VERB = 1
   RU_VERB = 2
   NA_ADJECTIVE = 3
   I_ADJECTIVE = 4
-  NOUN = 5
+  ANIMATE_NOUN = 5
+  INANIMATE_NOUN = 6
 
 class Word:
     def __init__(self, japanese, english, type):
@@ -21,22 +23,54 @@ class Word:
         self.english = english
         self.type = type
 
-word = Word("しずか", "quiet", Type.NA_ADJECTIVE)
-
-# print(word.type.name)
-
 adjectives = [
   Word("しずか", "quiet", Type.NA_ADJECTIVE),
-  Word("たかい】", "like", Type.I_ADJECTIVE)
+  Word("たかい", "tall/expensive", Type.I_ADJECTIVE),
+  Word("きれい", "hateful", Type.I_ADJECTIVE),
+  Word("しんせつ", "thoughtful", Type.NA_ADJECTIVE),
+  Word("すき", "like", Type.NA_ADJECTIVE),
+  Word("おいしい", "tasty", Type.I_ADJECTIVE),
+  Word("いい", "good", Type.I_ADJECTIVE),
+  Word("かっこいい", "cool", Type.I_ADJECTIVE),
 ]
 
 verbs = [
   Word("たべる", "eat", Type.RU_VERB),
-  Word("はなす", "talk", Type.U_VERB)
+  Word("わかる", "understand", Type.U_VERB),
+  Word("みる", "see", Type.RU_VERB),
+  Word("ねる", "sleep", Type.RU_VERB),
+  Word("かんがえる", "think", Type.RU_VERB),
+  Word("おしえる", "teach/inform", Type.RU_VERB),
+  Word("でる", "exit", Type.RU_VERB),
+  Word("きる", "wear", Type.RU_VERB),
+  Word("きる", "cut", Type.U_VERB),
+  Word("はしる", "run", Type.RU_VERB),
+  Word("きく", "ask/listen", Type.U_VERB),
+  Word("あそぶ", "play", Type.U_VERB),
+  Word("まつ", "wait", Type.U_VERB),
+  Word("しぬ", "die", Type.U_VERB),
+  Word("のむ", "drink", Type.U_VERB),
+  Word("かう", "buy", Type.U_VERB),
+  Word("くる", "come", Type.RU_VERB),
+  Word("かく", "write", Type.U_VERB),
+  Word("もつ", "hold", Type.U_VERB),
+  Word("すてる", "throw away", Type.RU_VERB),
 ]
 
 nouns = [
-  Word("ひと", "person", Type.NOUN)
+  Word("ひと", "person", Type.ANIMATE_NOUN),
+  Word("ともだち", "friend", Type.ANIMATE_NOUN),
+  Word("わたし", "I", Type.ANIMATE_NOUN),
+  Word("ねこ", "cat", Type.ANIMATE_NOUN),
+  Word("さかな", "fish", Type.ANIMATE_NOUN),
+  Word("にく", "meat", Type.INANIMATE_NOUN),
+  Word("やさい", "vegetable", Type.INANIMATE_NOUN),
+  Word("たべもの", "food", Type.INANIMATE_NOUN),
+  Word("ビル", "building", Type.INANIMATE_NOUN),
+  Word("ねだん】", "price", Type.INANIMATE_NOUN),
+  Word("おかね", "money", Type.INANIMATE_NOUN),
+  Word("えいが", "movie", Type.INANIMATE_NOUN),
+  Word("ごはん", "rice", Type.INANIMATE_NOUN),
 ]
 
 def getNoun():
