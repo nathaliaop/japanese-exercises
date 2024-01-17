@@ -2,8 +2,6 @@ import re
 import random
 from enum import Enum
 
-# TODO: ramdomly generate past and positive
-# TODO: ramdomly return verbs, nouns and adjectives
 # TODO: README
 # TODO: front-end with hiragana keyboard
 
