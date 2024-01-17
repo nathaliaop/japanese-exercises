@@ -22,9 +22,10 @@ class Word:
 adjectives = [
   Word("しずか", "quiet", Type.NA_ADJECTIVE),
   Word("たかい", "tall/expensive", Type.I_ADJECTIVE),
-  Word("きれい", "hateful", Type.I_ADJECTIVE),
+  Word("きれい", "clean/beautiful", Type.I_ADJECTIVE),
+  Word("きらい", "hateful", Type.I_ADJECTIVE),
   Word("しんせつ", "thoughtful", Type.NA_ADJECTIVE),
-  Word("すき", "like", Type.NA_ADJECTIVE),
+  Word("すき", "liked", Type.NA_ADJECTIVE),
   Word("おいしい", "tasty", Type.I_ADJECTIVE),
   Word("いい", "good", Type.I_ADJECTIVE),
   Word("かっこいい", "cool", Type.I_ADJECTIVE),
@@ -47,13 +48,14 @@ verbs = [
   Word("しぬ", "die", Type.U_VERB),
   Word("のむ", "drink", Type.U_VERB),
   Word("かう", "buy", Type.U_VERB),
-  Word("くる", "come", Type.RU_VERB), #exception 
   Word("かく", "write", Type.U_VERB),
   Word("もつ", "hold", Type.U_VERB),
   Word("すてる", "throw away", Type.RU_VERB),
+  Word("よむ", "read", Type.U_VERB),
+  Word("くる", "come", Type.RU_VERB), #exception 
+  Word("する", "do", Type.RU_VERB), # exception
   Word("いる", "exist(animate)", Type.RU_VERB),
   Word("ある", "exist(inanimate)", Type.RU_VERB),
-  Word("する", "do", Type.RU_VERB), # exception
   Word("いく", "go", Type.U_VERB),
 ]
 
@@ -84,9 +86,11 @@ def getVerb():
 
 def convertAdjective(adjective, adjectiveType, adjectiveIsPositive, adjectiveInPresentTense):
     if adjective == "いい" or adjective == "かっこいい":
-        adjective = ""
         if adjective == "かっこいい":
             adjective = "かっこ"
+        else:
+            adjective = ""
+
         if adjectiveIsPositive and adjectiveInPresentTense:
             return adjective + "いい"
         elif not adjectiveIsPositive and adjectiveInPresentTense:
@@ -138,18 +142,18 @@ def convertVerb(verb, verbType, verbIsPositive, verbInPresentTense):
            return verb
         elif not verbIsPositive and verbInPresentTense:
             if verb == "する":
-                verb = "しない"
+                return "しない"
             elif verb == "くる":
-                verb = "こない"
+                return "こない"
             elif verb == "ある":
-                verb = "ない"
+                return "ない"
 
             return re.sub(r"る$", "", verb) + "ない"
         elif verbIsPositive and not verbInPresentTense:
             if verb == "する":
-                verb = "した"
+                return "した"
             elif verb == "した":
-                verb = "こない"
+                return "こない"
             
             return re.sub(r"る$", "", verb) + "た"
         elif not verbIsPositive and not verbInPresentTense:
@@ -168,7 +172,7 @@ def convertVerb(verb, verbType, verbIsPositive, verbInPresentTense):
             return verb
         elif not verbIsPositive and verbInPresentTense:
             if re.search(r"(う$)", verb):
-                return re.sub(r"う$", "", verb) + "わ"
+                return re.sub(r"う$", "", verb) + "わない"
             else:
                 lastSymbol = re.search("([ぁ-ゔァ-ヴー])$", verb)
                 return re.sub("([ぁ-ゔァ-ヴー])$", "", verb) + aEquivalent[lastSymbol.group(0)] + "ない"
@@ -199,7 +203,7 @@ if __name__=="__main__":
     numberOfQuestions = int(input())
     totalScore = 0
 
-    for _ in range(numberOfQuestions):
+    for questionNumber in range(1, numberOfQuestions + 1):
         adjective = getAdjective()
         noun = getNoun()
         verb = getVerb()
@@ -215,7 +219,7 @@ if __name__=="__main__":
         verbInPresentTense = random.randint(0, 1)
         verbIsPositive = random.randint(0, 1)
 
-        print(f"""How do you say\n'{noun.english} that {
+        print(f"""{questionNumber} - How do you say\n'{noun.english} that {
         'is ' if adjectiveInPresentTense else 'was '}{
         '' if adjectiveIsPositive else 'not '}{adjective.english}{
         ' do ' if verbInPresentTense else ' did '}{
@@ -229,6 +233,7 @@ if __name__=="__main__":
 
         if userAnswer == correctAnswer:
             print("Correct!\n")
+            totalScore += 1
         else:
             print(f"Wrong! The correct answer is:\n{correctAnswer}\n")
         
