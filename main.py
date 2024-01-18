@@ -199,6 +199,7 @@ def convertVerb(verb, verbType, verbIsPositive, verbInPresentTense):
             return re.sub(r"い$", "", verb) + "かった"
 
 if __name__=="__main__":
+    print("Hiragana virtual keyboard in: https://lexilogos.com/keyboard/hiragana.htm")
     print("How many questions do you want?")
     numberOfQuestions = int(input())
     totalScore = 0
