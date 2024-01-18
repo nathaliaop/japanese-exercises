@@ -24,7 +24,7 @@ adjectives = [
   Word("たかい", "tall/expensive", Type.I_ADJECTIVE),
   Word("きれい", "hateful", Type.I_ADJECTIVE),
   Word("しんせつ", "thoughtful", Type.NA_ADJECTIVE),
-  Word("すき", "like", Type.NA_ADJECTIVE),
+  Word("すき", "liked", Type.NA_ADJECTIVE),
   Word("おいしい", "tasty", Type.I_ADJECTIVE),
   Word("いい", "good", Type.I_ADJECTIVE),
   Word("かっこいい", "cool", Type.I_ADJECTIVE),
