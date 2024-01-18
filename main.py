@@ -71,6 +71,7 @@ nouns = [
   Word("おかね", "money", Type.INANIMATE_NOUN),
   Word("えいが", "movie", Type.INANIMATE_NOUN),
   Word("ごはん", "rice", Type.INANIMATE_NOUN),
+  Word("にんじん", "carrot", Type.INANIMATE_NOUN),
 ]
 
 def getNoun():
