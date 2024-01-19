@@ -6,15 +6,17 @@ from enum import Enum
 # TODO: front-end with hiragana keyboard
 
 class Type(Enum):
+  NONE = 0
   U_VERB = 1
   RU_VERB = 2
   NA_ADJECTIVE = 3
   I_ADJECTIVE = 4
   ANIMATE_NOUN = 5
   INANIMATE_NOUN = 6
+  ADVERB = 7
 
 class Word:
-    def __init__(self, japanese, english, type):
+    def __init__(self, japanese, english, type=Type.NONE):
         self.japanese = japanese
         self.english = english
         self.type = type
@@ -25,10 +27,20 @@ adjectives = [
   Word("きれい", "clean/beautiful", Type.I_ADJECTIVE),
   Word("きらい", "hateful", Type.I_ADJECTIVE),
   Word("しんせつ", "thoughtful", Type.NA_ADJECTIVE),
-  Word("すき", "liked", Type.NA_ADJECTIVE),
+  Word("ひま", "free (not busy)", Type.NA_ADJECTIVE),
+  Word("すき", "likable", Type.NA_ADJECTIVE),
   Word("おいしい", "tasty", Type.I_ADJECTIVE),
   Word("いい", "good", Type.I_ADJECTIVE),
   Word("かっこいい", "cool", Type.I_ADJECTIVE),
+  Word("だいすき", "loved", Type.NA_ADJECTIVE),
+  Word("だいじょうぶ", "fine", Type.NA_ADJECTIVE),
+  Word("あかい", "red", Type.I_ADJECTIVE),
+  Word("あおい", "blue", Type.I_ADJECTIVE),
+  Word("きいろい", "yellow", Type.I_ADJECTIVE),
+  Word("くろい", "black", Type.I_ADJECTIVE),
+  Word("しろい", "white", Type.I_ADJECTIVE),
+  Word("ちゃいろい", "brown", Type.I_ADJECTIVE),
+  Word("げんき", "lively", Type.NA_ADJECTIVE),
 ]
 
 verbs = [
@@ -42,6 +54,8 @@ verbs = [
   Word("きる", "wear", Type.RU_VERB),
   Word("きる", "cut", Type.U_VERB),
   Word("はしる", "run", Type.RU_VERB),
+  Word("やめる", "quit", Type.RU_VERB),
+  Word("おきる", "wake", Type.RU_VERB),
   Word("きく", "ask/listen", Type.U_VERB),
   Word("あそぶ", "play", Type.U_VERB),
   Word("まつ", "wait", Type.U_VERB),
@@ -68,7 +82,6 @@ nouns = [
   Word("にく", "meat", Type.INANIMATE_NOUN),
   Word("やさい", "vegetable", Type.INANIMATE_NOUN),
   Word("たべもの", "food", Type.INANIMATE_NOUN),
-  Word("ビル", "building", Type.INANIMATE_NOUN),
   Word("ねだん", "price", Type.INANIMATE_NOUN),
   Word("おかね", "money", Type.INANIMATE_NOUN),
   Word("えいが", "movie", Type.INANIMATE_NOUN),
@@ -76,13 +89,13 @@ nouns = [
   Word("にんじん", "carrot", Type.INANIMATE_NOUN),
 ]
 
-def getNoun():
+def getNoun(nouns):
     return nouns[random.randint(0, len(nouns) - 1)]
 
-def getAdjective():
+def getAdjective(adjectives):
     return adjectives[random.randint(0, len(adjectives) - 1)]
 
-def getVerb():
+def getVerb(verbs):
     return verbs[random.randint(0, len(verbs) - 1)]
 
 def convertAdjective(adjective, adjectiveType, adjectiveIsPositive, adjectiveInPresentTense):
@@ -206,15 +219,13 @@ if __name__=="__main__":
     totalScore = 0
 
     for questionNumber in range(1, numberOfQuestions + 1):
-        adjective = getAdjective()
-        noun = getNoun()
-        verb = getVerb()
+        adjective = getAdjective(adjectives)
+        noun = getNoun(nouns)
+        verb = getVerb(verbs)
         particle = "が";
 
-        while (verb.japanese == "いる" and noun.type != Type.ANIMATE_NOUN):
-            noun = getNoun()
-        while (verb.japanese == "ある" and noun.type != Type.INANIMATE_NOUN):
-            noun = getNoun()
+        while (verb.japanese == "いる" and noun.type != Type.ANIMATE_NOUN) or (verb.japanese == "ある" and noun.type != Type.INANIMATE_NOUN):
+            noun = getNoun(nouns)
 
         adjectiveInPresentTense = random.randint(0, 1)
         adjectiveIsPositive = random.randint(0, 1)
